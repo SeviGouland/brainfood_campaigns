@@ -15,13 +15,15 @@ class Reports extends AdminController
     }
 
     public function view_report_list() {
+
+        $id = $this->uri->segment(6);
         $data['reportsByCampaign'] = $this->Reports_model->getReportsByCampaign();
 
         $config = array();
-        $config['base_url'] = admin_url('reports/view_report_list');
+        $config['base_url'] = admin_url('brainfood_campaigns/reports/view_report_list' . $id);
         $config['total_rows'] = $this->Reports_model->get_count();
         $config['per_page'] = 5;
-        $config['uri_segment'] = 3;
+        $config['uri_segment'] = 5;
         $config['num_links'] = 5;
 
         // Bootstrap pagination configuration
@@ -136,6 +138,14 @@ class Reports extends AdminController
 
 
             foreach($responses['data'] as $item) {
+
+                if ($item['id'] && !empty($item['id'])) {
+                    
+                    $campaign_id = $item['id'];
+
+                if (!$this->Reports_model->report_exists($campaign_id)) {
+                
+
                 
                 // echo "<pre>";
                 // print_r ($item);
@@ -156,10 +166,10 @@ class Reports extends AdminController
                 echo "</pre>"; 
                 
                 $this->Reports_model->add_report_to_db($obToInsert);
-                 
             }
-
+        }
     }
-    
-}
+            }
+    }
+
 ?>

@@ -16,8 +16,8 @@
                 <form action="<?php echo admin_url('brainfood_campaigns/reports/add_report'); ?>" method="post" class="form-group">
                 <input type="hidden" name="csrf_token_name" value="<?php echo $this->security->get_csrf_hash(); ?>" />
                 <div class="form-group">
-                    <label>Campaign_name</label>
-                    <input type="text" name="campaign_id" class="form-control" placeholder="Responses">
+                    <label>Campaign_ID</label>
+                    <input type="text" name="campaign_id" class="form-control" placeholder="Campaign_ID">
                 </div>
                 <div class="form-group">
                     <label>Responses</label>

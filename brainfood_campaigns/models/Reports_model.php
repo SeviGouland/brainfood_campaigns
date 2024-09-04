@@ -38,4 +38,11 @@ class Reports_model extends App_Model {
                                     group by campaign_id');
         return $query->result();
     }
+
+    public function report_exists($campaign_id) {
+        $this->db->where('campaign_id', $campaign_id);
+        $query = $this->db->get('sevi_reports'); 
+
+        return $query->num_rows() > 0;
+}
 }
