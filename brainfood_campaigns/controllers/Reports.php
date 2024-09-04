@@ -116,67 +116,49 @@ class Reports extends AdminController
     }
 
     public function get_request() {
-        // Initialize a cURL session
-        $curl = curl_init();
-    
-        // Set the URL to fetch
-        $url = "https://api.adbutler.com/v2/reports?type=campaign&period=year&preset=last-12-months";
-    
-        // Set the Authorization header
-        $authorization = "Basic ef1e863b7a65a6f1e9d2b5eb5c3a5d80";
-    
-        // Set the cURL options
-        curl_setopt($curl, CURLOPT_URL, $url);                // Set the URL
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);     // Return the response as a string
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-            "Authorization: $authorization",
-            "Content-Type: application/json"
-        )); // Set the Authorization header
-    
-        $response = curl_exec($curl);
-        curl_close($curl); // Close the cURL session
-    
-        // Check if the response was received
-        if ($response === false) {
-            echo "cURL Error: " . curl_error($curl);
-            exit;
-        }
-    
-        // Decode the JSON response into an associative array
-        $decodedResponse = json_decode($response, true);
 
-        // Ensure the decoded response is an array
-        if (isset($decodedResponse['data']) && is_array($decodedResponse['data'])) {
-            foreach ($decodedResponse['data'] as $item) {
-                // Debug output for the current item
-                // print_r($item);
-    
-                // Ensure 'summary' is set and is an array
-                if (isset($item['summary']) && is_array($item['summary'])) {
-                    // Extract the required fields
-                    $summary = $item['summary'];
-                    
-                    $obToInsert = array(
-                        'id' => isset($item['id']) ? $item['id'] : null,              // Add the 'id' field
-                        'impressions' => isset($summary['impressions']) ? $summary['impressions'] : null,  // Add the 'impressions' field
-                        'clicks' => isset($summary['clicks']) ? $summary['clicks'] : null,      // Add the 'clicks' field
-                        'responses' => isset($summary['responses']) ? $summary['responses'] : null  // Add the 'responses' field if it exists
-                    );
-    
-                    // Print the object to be inserted for debugging
-                    print_r($obToInsert);
-    
-                    // Insert the data into the database using your model
-                    $this->Reports_model->add_report_to_db($obToInsert);
-                } else {
-                    echo "Summary data is missing or not an array for item: ";
-                    print_r($item);
-                }
+            $reports_url = 'https://api.adbutler.com/v2/reports?type=campaign&period=year&preset=last-12-months';
+            $ch = curl_init($reports_url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                'Authorization: Basic ef1e863b7a65a6f1e9d2b5eb5c3a5d80'
+            ]);
+            $JSONresponse = curl_exec($ch);
+            curl_close($ch);
+            $responses = json_decode($JSONresponse, true);
+        
+        // echo '<pre>';
+        // echo 'RESPONSE:';
+        // var_dump($responses);
+        // echo '</pre>';
+
+
+            foreach($responses['data'] as $item) {
+                
+                // echo "<pre>";
+                // print_r ($item);
+                // echo "</pre>";
+
+                $summary = $item['summary'];
+
+                $obToInsert = array(
+                    'campaign_id' => $item['id'], 
+                    'campaign_name' => 'Campaign' . ' ' . $item['id'],
+                    'responses' => $item['summary']['responses'],
+                    'impressions' => $item['summary']['impressions'],
+                    'clicks' => $item['summary']['clicks']
+                );
+
+                echo "<pre>";
+                print_r ($obToInsert);
+                echo "</pre>"; 
+                
+                $this->Reports_model->add_report_to_db($obToInsert);
+                 
             }
-        } else {
-            echo "Decoded response is not in expected format: ";
-            print_r($decodedResponse);
-        }
+
     }
     
 }
