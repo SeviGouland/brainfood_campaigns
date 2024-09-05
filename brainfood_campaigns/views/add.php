@@ -39,4 +39,11 @@
                 <button type="submit" name="add_report" class="btn btn-default" value="Add Report">Submit</button>
                 </form>
 
+
 <?php init_tail(); ?>
+
+
+
+ 
+
+

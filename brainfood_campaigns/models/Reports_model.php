@@ -9,16 +9,40 @@ class Reports_model extends App_Model {
         $this->load->database(); // Load the database
     }
 
-    public function get_reports($limit, $start) {
+    /** CRUD ************************************************************************************* */
+
+    public function insert_report($report){
+
+    }
+
+    public function get_reports($filters = ['limit' => 10, 'offset' => 0]) {
 
         $last_year = date('Y', strtotime('-1 year'));
 
-        $this->db->where('YEAR(date) >', $last_year);
-        $this->db->limit($limit, $start);
-        $query = $this->db->get('sevi_reports');
-        
-        return $query->result();
+        $this->db->select('*');
+        $this->db->from('sevi_reports');
+        //$this->db->where('YEAR(date) >', $last_year);
+        $num_rows = $this->db->count_all_results('', false);
+        $this->db->limit($filters['limit'], $filters['offset']);
+        $query = $this->db->get()->result_array();
+               
+        return ['data' => $query, 'total'=> $num_rows];
     }
+
+    public function update_report($report){
+        $this->db->where('id', $report['id']);
+        return $this->db->update('sevi_reports', $report);
+    }
+
+    public function delete_report($report_id){
+
+    }
+
+    /** END CRUD ************************************************************************************* */
+
+
+
+
 
     public function get_count() {
 
