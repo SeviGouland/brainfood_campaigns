@@ -94,6 +94,20 @@ $this->load->view('templates/modals/edit-campaign-modal.php');
             </button></div>`;
         },
       },
+      {
+        title: 'Status',
+        searchable: false,
+        data: null,
+        render: function(data, type, row) {
+          return `
+            <div><button class="btn btn-danger delete-button"
+            data_campaign_id="${row.id}"
+            <span role="link" data-campaign='${JSON.stringify(row)}' class="delete-campaign">
+            Delete
+            </button></div>`;
+        },
+      }
+
     ];
   
     giveDatatable(reportsEndpoint, reportsColumns, () => {}, {
@@ -133,6 +147,30 @@ $this->load->view('templates/modals/edit-campaign-modal.php');
           console.log(response);
         }
       });
+    });
+
+    $('delete-report-btn').on('click', '.delete-button', function()  {
+     const controllerName = 'reports';
+      const methodName = 'delete_report';
+      $.ajax({
+        url: `${admin_url}/brainfood_campaigns/${controllerName}/${methodName}`,
+        type: 'POST',
+        dataType: 'json',
+        data: data,
+        success: function(response) {
+          console.log(response);
+        }
+      });
+    });
+  });
+
+
+</script>
+
+
+
+
+      
 
       
       //create the corresponding controller method
@@ -147,8 +185,4 @@ $this->load->view('templates/modals/edit-campaign-modal.php');
 //     "date": "2024-09-04 16:05:17"
 // }
       
-    });
-  });
-
-
-</script>
+    

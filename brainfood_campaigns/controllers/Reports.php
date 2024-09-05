@@ -106,9 +106,8 @@ class Reports extends AdminController
     }
 
     public function delete_report($id) {
-        $this->db->where('id', $id);
-        $this->db->delete('sevi_reports');
-        redirect('admin/brainfood_campaigns/reports/view_report_list', 'refresh');
+        $modal_resp = $this->Reports_model->delete_report($id);
+        echo json_encode($modal_resp);
     }
 
     public function get_request() {

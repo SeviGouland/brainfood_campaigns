@@ -35,7 +35,8 @@ class Reports_model extends App_Model {
     }
 
     public function delete_report($report_id){
-
+        $this->db->where('id', $report_id['id']);
+        return $this->db->delete('sevi_reports', $report_id);
     }
 
     /** END CRUD ************************************************************************************* */
