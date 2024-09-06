@@ -11,10 +11,26 @@ class Reports_model extends App_Model {
 
     /** CRUD ************************************************************************************* */
 
-    public function insert_report($report){
+
+    // περιμενει μια παραμετρο ωστε να επικοινωνησει ο controller με το model μεσω αυτης
+    public function insert_report($details){  
+
+        $data = array(
+
+            "campaign_id" => $details['campaign_id'],
+            "campaign_name" =>"Campaign " . $details['campaign_id'],
+            "responses" => $details['responses'],
+            "impressions" => $details['impressions'],
+            // "date" => date('Y-m-d H:m:s', strtotime(str_replace('/', '-', $details['date']))) 
+        );
+        
+
+        $this->db->insert('sevi_reports', $data);
+
+
 
     }
-
+    
     public function get_reports($filters = ['limit' => 10, 'offset' => 0]) {
 
         $last_year = date('Y', strtotime('-1 year'));
@@ -50,10 +66,10 @@ class Reports_model extends App_Model {
         return $this->db->count_all('tblsevi_reports'); 
     }
 
-    public function add_report_to_db($report_details) {
+    // public function add_report_to_db($report_details) {
 
-        $this->db->insert('sevi_reports', $report_details);
-    }
+    //     $this->db->insert('sevi_reports', $report_details);
+    // }
 
     public function getReportsByCampaign() {
 

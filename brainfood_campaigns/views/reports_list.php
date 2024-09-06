@@ -79,6 +79,4 @@
 
             <?php init_tail(); ?>
 
-            <script>
-              new DataTable('#example');
-            </script>
+           

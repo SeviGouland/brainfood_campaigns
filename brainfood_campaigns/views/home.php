@@ -16,10 +16,10 @@
 
             <!-- PAGE CONTENT HERE -------------------------->
             <div class="row mtop10">
-
               <table id="cleon-datatable" class="table table-striped table-bordered" width="100%"></table>
-
-
+            </div>
+            <div>
+              <button class="btn btn-primary add-campaign">Add Campaign</button>
             </div>
 
           </div>
@@ -30,16 +30,16 @@
   </div>
 </div>
 
-<?php 
+<?php
 $this->load->view('templates/modals/edit-campaign-modal.php');
+$this->load->view('templates/modals/add-campaign-modal.php');
 ?>
 
 <?php init_tail(); ?>
 
 
 <script>
-
-  $(document).ready(function(){
+  $(document).ready(function() {
 
     const reportsEndpoint = `${admin_url}brainfood_campaigns/reports/get_reports_with_filters`;
     const reportsColumns = [{
@@ -107,18 +107,19 @@ $this->load->view('templates/modals/edit-campaign-modal.php');
             </button></div>`;
         },
       }
-
     ];
-  
+
+
     giveDatatable(reportsEndpoint, reportsColumns, () => {}, {
       searching: true,
     });
-  
+
+
     $(document).on('click', '.edit-button', function() {
       // Parse the campaign data from the button's data attribute
       const campaign = JSON.parse($(this).attr('data-campaign'));
 
-      for(const prop in campaign){
+      for (const prop in campaign) {
         $(`[name="${prop}"]`).val(campaign[prop]);
       }
 
@@ -130,18 +131,19 @@ $this->load->view('templates/modals/edit-campaign-modal.php');
       // $('input[name="clicks"]').val(campaign.clicks);
       // $('input[name="campaign_id"]').val(campaign.campaign_id);
     });
-  
-    $('.update-report-btn').on('click', function(){
- 
-      let data = getCustomFormData('#edit-campaign-form', 'input');   
+
+
+    $('.update-report-btn').on('click', function() {
+
+      let data = getCustomFormData('#edit-campaign-form', 'input');
       const controllerName = 'reports';
       const methodName = 'update_report_process';
       //make a POST ajax call to a controller method that passes the data
       $.ajax({
         url: `${admin_url}/brainfood_campaigns/${controllerName}/${methodName}`,
-        type: 'POST',      //or GET
+        type: 'POST', //or GET
         dataType: 'json', //data type of resposne
-        data: data,       //the data to be sent
+        data: data, //the data to be sent
         //what to do with the response after the request completes
         success: function(response) {
           console.log(response);
@@ -149,9 +151,32 @@ $this->load->view('templates/modals/edit-campaign-modal.php');
       });
     });
 
-    $('delete-report-btn').on('click', '.delete-button', function()  {
-     const controllerName = 'reports';
-      const methodName = 'delete_report';
+    $('.add-report-btn').on('click', function() {
+
+      let data = getCustomFormData('#add-campaign-modal', 'input');
+      const controllerName = 'reports';
+
+      const methodName = 'add_reports';
+
+      $.ajax({
+        url: `${admin_url}/brainfood_campaigns/${controllerName}/${methodName}`,
+        type: 'POST',
+        dataType: 'json',
+        data: data,
+        success: function(response) {
+          $('#add-campaign-modal').modal('hide');
+          $(".add-report-btn").on("click", function() {
+            $("input").empty();
+          });
+          console.log(response);
+        }
+      });
+    })
+
+    $('.delete-button').click(function() {
+
+      const controllerName = 'reports';
+      const methodName = 'delete_report_process';
       $.ajax({
         url: `${admin_url}/brainfood_campaigns/${controllerName}/${methodName}`,
         type: 'POST',
@@ -160,29 +185,27 @@ $this->load->view('templates/modals/edit-campaign-modal.php');
         success: function(response) {
           console.log(response);
         }
+        
       });
     });
+
+    $(document).on('click', '.add-campaign', function() {
+
+      console.log($('#add-campaign-modal'));
+      $('#add-campaign-modal').modal('show');
+    });
+
   });
 
+  //create the corresponding controller method
+  //the controller method should call a model method which updates the selected campaign
+  //after a successful update also close the modal and update the table data
 
+  // {
+  // "campaign_name": "Campaign 878076",
+  // "responses": "68",
+  // "impressions": "68",
+  // "clicks": "0",
+  // "date": "2024-09-04 16:05:17"
+  // }
 </script>
-
-
-
-
-      
-
-      
-      //create the corresponding controller method
-      //the controller method should call a model method which updates the selected campaign
-      //after a successful update also close the modal and update the table data
-
-//       {
-//     "campaign_name": "Campaign 878076",
-//     "responses": "68",
-//     "impressions": "68",
-//     "clicks": "0",
-//     "date": "2024-09-04 16:05:17"
-// }
-      
-    
