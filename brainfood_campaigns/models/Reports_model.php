@@ -38,6 +38,14 @@ class Reports_model extends App_Model {
         $this->db->select('*');
         $this->db->from('sevi_reports');
         //$this->db->where('YEAR(date) >', $last_year);
+        
+        if(isset($filters['search']) && $filters['search'] !== '') {
+            $this->db->like('campaign_name', $filters['search'], 'both');
+        }
+        if(isset($filters['order'])) {
+            $this->db->order_by($filters['order'][0]['name'], $filters['order'][0]['dir']);
+            
+        }
         $num_rows = $this->db->count_all_results('', false);
         $this->db->limit($filters['limit'], $filters['offset']);
         $query = $this->db->get()->result_array();

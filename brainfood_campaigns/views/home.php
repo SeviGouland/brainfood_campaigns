@@ -46,31 +46,31 @@ $this->load->view('templates/modals/add-campaign-modal.php');
         title: 'Date',
         searchable: false,
         data: 'date',
-        name: 'AdvertiserName'
+        name: 'date'
       },
       {
         title: 'Responses',
         searchable: false,
         data: 'responses',
-        name: 'AdvertiserName'
+        name: 'responses'
       },
       {
         title: 'Impressions',
         searchable: false,
         data: 'impressions',
-        name: 'AdvertiserName'
+        name: 'impressions'
       },
       {
         title: 'Campaign_ID',
         searchable: false,
         data: 'campaign_id',
-        name: 'AdvertiserName'
+        name: 'campaign_id'
       },
       {
         title: 'Campaign Name',
         searchable: false,
         data: 'campaign_name',
-        name: 'AdvertiserName'
+        name: 'campaign_name'
       },
       {
         title: 'Status',
@@ -112,6 +112,7 @@ $this->load->view('templates/modals/add-campaign-modal.php');
 
     giveDatatable(reportsEndpoint, reportsColumns, () => {}, {
       searching: true,
+      ordering: true
     });
 
 
@@ -131,6 +132,12 @@ $this->load->view('templates/modals/add-campaign-modal.php');
       // $('input[name="clicks"]').val(campaign.clicks);
       // $('input[name="campaign_id"]').val(campaign.campaign_id);
     });
+
+    function clearFormFields() {
+
+      $('input[name="responses"], input[name="impressions"], input[name="clicks"],input[name="campaign_id"]').val('')
+    }
+
 
 
     $('.update-report-btn').on('click', function() {
@@ -165,9 +172,7 @@ $this->load->view('templates/modals/add-campaign-modal.php');
         data: data,
         success: function(response) {
           $('#add-campaign-modal').modal('hide');
-          $(".add-report-btn").on("click", function() {
-            $("input").empty();
-          });
+          clearFormFields();
           console.log(response);
         }
       });
