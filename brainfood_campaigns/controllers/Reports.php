@@ -65,6 +65,10 @@ class Reports extends AdminController
         echo json_encode($reports);
     }
 
+    public function get_reports_by_campaign_id() {
+        $get_reports_by_campaign = $this->Reports_model->getReportsByCampaign();
+        echo json_encode($get_reports_by_campaign);
+    }
 
     public function add_reports() {
 

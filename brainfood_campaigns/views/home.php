@@ -21,9 +21,10 @@
             <div>
               <button class="btn btn-primary add-campaign">Add Campaign</button>
             </div>
-
+            <div class="row mtop10">
+              <table id="second-table" class="table table-striped table-bordered" width="100%"></table>
+            </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -73,39 +74,77 @@ $this->load->view('templates/modals/add-campaign-modal.php');
         name: 'campaign_name'
       },
       {
-        title: 'Status',
+        title: 'Clicks',
         searchable: false,
-        data: null,
-        render: function(data, type, row) {
-          //console.log(data);
-          return parseInt(data.impressions) > 30 ? 'Has many Impressions' : 'Has few impressions';
-        }
+        data: 'clicks',
+        name: 'clicks'
       },
+      // {
+      //   title: 'Status',
+      //   searchable: false,
+      //   data: null,
+      //   render: function(data, type, row) {
+      //     //console.log(data);
+      //     return parseInt(data.impressions) > 30 ? 'Has many Impressions' : 'Has few impressions';
+      //   }
+      // },
       {
-        title: 'Status',
+        title: 'Edit',
         searchable: false,
         data: null,
         render: function(data, type, row) {
           return `
             <div><button class="btn btn-info edit-button"
-            data_campaign_id="${row.id}"
-            <span role="link" data-campaign='${JSON.stringify(row)}' class="edit-campaign">
+            data_campaign_id="${row.id}" data-campaign='${JSON.stringify(row)}'>
             Edit
             </button></div>`;
         },
       },
       {
-        title: 'Status',
+        title: 'Delete',
         searchable: false,
         data: null,
         render: function(data, type, row) {
           return `
             <div><button class="btn btn-danger delete-button"
-            data_campaign_id="${row.id}"
-            <span role="link" data-campaign='${JSON.stringify(row)}' class="delete-campaign">
+            data-campaign-id="${row.id}">
             Delete
             </button></div>`;
         },
+      }
+    ];
+
+    const reportsEndpoint2 = `${admin_url}brainfood_campaigns/reports/get_reports_by_campaign_id`;
+    const reportsColumns2 = [{
+
+        title: 'Responses',
+        searchable: false,
+        data: 'responses',
+        name: 'responses'
+      },
+      {
+        title: 'Impressions',
+        searchable: false,
+        data: 'impressions',
+        name: 'impressions'
+      },
+      {
+        title: 'Campaign_ID',
+        searchable: false,
+        data: 'campaign_id',
+        name: 'campaign_id'
+      },
+      {
+        title: 'Campaign Name',
+        searchable: false,
+        data: 'campaign_name',
+        name: 'campaign_name'
+      },
+      {
+        title: 'Clicks',
+        searchable: false,
+        data: 'clicks',
+        name: 'clicks'
       }
     ];
 
@@ -114,6 +153,12 @@ $this->load->view('templates/modals/add-campaign-modal.php');
       searching: true,
       ordering: true
     });
+
+    giveDatatable(reportsEndpoint, reportsColumns2, () => {}, {
+      searching: true
+    }, '#second-table')
+
+    
 
 
     $(document).on('click', '.edit-button', function() {
@@ -165,6 +210,8 @@ $this->load->view('templates/modals/add-campaign-modal.php');
 
       const methodName = 'add_reports';
 
+
+
       $.ajax({
         url: `${admin_url}/brainfood_campaigns/${controllerName}/${methodName}`,
         type: 'POST',
@@ -178,19 +225,20 @@ $this->load->view('templates/modals/add-campaign-modal.php');
       });
     })
 
-    $('.delete-button').click(function() {
-
+    $(document).on('click', '.delete-button', function() {
+      const id = $(this).data('campaign-id');
+      let data = getCustomFormData('#delete-button', id)
       const controllerName = 'reports';
       const methodName = 'delete_report_process';
       $.ajax({
-        url: `${admin_url}/brainfood_campaigns/${controllerName}/${methodName}`,
+        url: `${admin_url}/brainfood_campaigns/${controllerName}/${methodName}/${id}`,
         type: 'POST',
         dataType: 'json',
         data: data,
         success: function(response) {
           console.log(response);
         }
-        
+
       });
     });
 
