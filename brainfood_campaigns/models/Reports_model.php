@@ -21,6 +21,7 @@ class Reports_model extends App_Model {
             "campaign_name" =>"Campaign " . $details['campaign_id'],
             "responses" => $details['responses'],
             "impressions" => $details['impressions'],
+            "clicks" => $details['clicks']
             // "date" => date('Y-m-d H:m:s', strtotime(str_replace('/', '-', $details['date']))) 
         );
         
@@ -38,6 +39,14 @@ class Reports_model extends App_Model {
         $this->db->select('*');
         $this->db->from('sevi_reports');
         //$this->db->where('YEAR(date) >', $last_year);
+        
+        if(isset($filters['search']) && $filters['search'] !== '') {
+            $this->db->like('campaign_name', $filters['search'], 'both');
+        }
+        if(isset($filters['order'])) {
+            $this->db->order_by($filters['order'][0]['name'], $filters['order'][0]['dir']);
+            
+        }
         $num_rows = $this->db->count_all_results('', false);
         $this->db->limit($filters['limit'], $filters['offset']);
         $query = $this->db->get()->result_array();
@@ -51,8 +60,9 @@ class Reports_model extends App_Model {
     }
 
     public function delete_report($report_id){
-        $this->db->where('id', $report_id['id']);
-        return $this->db->delete('sevi_reports', $report_id);
+        $this->db->from('sevi_reports');
+        $this->db->where('id', $report_id);
+        return $this->db->delete('sevi_reports');
     }
 
     /** END CRUD ************************************************************************************* */
@@ -73,11 +83,28 @@ class Reports_model extends App_Model {
 
     public function getReportsByCampaign() {
 
-        $query = $this->db->query('select sum(impressions) as impressions, sum(responses) as responses,
-                                    sum(clicks) as clicks, campaign_id, campaign_name  
-                                    from tblsevi_reports
-                                    group by campaign_id');
-        return $query->result();
+        $this->db->select('
+            sum(clicks) as clicks, 
+            sum(impressions) as impressions,
+            sum(responses) as responses,
+            campaign_id,
+            campaign_name
+        ');
+        $this->db->from('tblsevi_reports');
+        $this->db->group_by('campaign_id');
+
+        // return $this->db->get()->result();
+        return $query->num_rows() > 0;
+        
+        
+        
+
+
+        // $query = $this->d('select impressions, responses,
+        //                             clicks, campaign_id, campaign_name  
+        //                             from tblsevi_reports
+        //                             group by campaign_id');
+        // return $query->result();
     }
 
     public function report_exists($campaign_id) {
