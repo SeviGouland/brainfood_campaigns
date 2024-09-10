@@ -15,6 +15,19 @@
             </div>
 
             <!-- PAGE CONTENT HERE -------------------------->
+            <div class="row">
+              <div class="col-md-4">
+                <input type="text" name="from_date" id="from_date" class="form-control datepicker" style="width: 100%;"
+                  value="<?php echo date('1/m/Y'); ?>" required autocomplete="off">
+              </div>
+              <div class="col-md-4">
+                <input type="text" name="to_date" id="to_date" class="form-control datepicker" style="width: 100%;"
+                  value="<?php echo date('d/m/Y'); ?>" required autocomplete="off">
+              </div>
+              <div class="col-xs-3 mtop70">
+                <button class="submit_dates btn btn-primary">Submit</button>
+              </div>
+            </div>
             <div class="row mtop10">
               <table id="cleon-datatable" class="table table-striped table-bordered" width="100%"></table>
             </div>
@@ -34,6 +47,7 @@
 <?php
 $this->load->view('templates/modals/edit-campaign-modal.php');
 $this->load->view('templates/modals/add-campaign-modal.php');
+$this->load->view('templates/modals/delete-campaign-modal.php');
 ?>
 
 <?php init_tail(); ?>
@@ -41,8 +55,37 @@ $this->load->view('templates/modals/add-campaign-modal.php');
 
 <script>
   $(document).ready(function() {
+    //global
+    let delete_id = '';
 
-    const reportsEndpoint = `${admin_url}brainfood_campaigns/reports/get_reports_with_filters`;
+    function formatDateForQuery(date) {
+      let d = date.replace(/\//g, '-');
+      d = d.split('-');
+      d = d.reverse();
+      return d.join('-');
+    }
+
+    let reportsEndpoint = `${admin_url}brainfood_campaigns/reports/get_reports_with_filters`;
+    let reportsEndpoint2 = `${admin_url}brainfood_campaigns/reports/get_reports_by_campaign_id`;
+
+    $('.submit_dates').on("click", function() {
+      let from_date = formatDateForQuery($('#from_date').val());
+      let to_date = formatDateForQuery($('#to_date').val());
+      reportsEndpoint = `${admin_url}brainfood_campaigns/reports/get_reports_with_filters?fromDate=${from_date}&toDate=${to_date}`; // οταν παταω το κουμπι θα με πηγαινει σε αυτο το url
+      let dtReports = giveDatatable(reportsEndpoint, reportsColumns, () => {}, {
+        searching: true,
+        ordering: true,
+        pageLength: 5
+      }, '#cleon-datatable');
+      reportsEndpoint2 = `${admin_url}brainfood_campaigns/reports/get_reports_by_campaign_id?fromDate=${from_date}&toDate=${to_date}`; // οταν παταω το κουμπι θα με πηγαινει σε αυτο το url
+      let dtReports2 = giveDatatable(reportsEndpoint2, reportsColumns2, () => {}, {
+        searching: true,
+        ordering: true,
+        pageLength: 5
+      }, '#second-table');
+    });
+
+
     const reportsColumns = [{
         title: 'Date',
         searchable: false,
@@ -114,7 +157,7 @@ $this->load->view('templates/modals/add-campaign-modal.php');
       }
     ];
 
-    const reportsEndpoint2 = `${admin_url}brainfood_campaigns/reports/get_reports_by_campaign_id`;
+
     const reportsColumns2 = [{
 
         title: 'Responses',
@@ -149,16 +192,16 @@ $this->load->view('templates/modals/add-campaign-modal.php');
     ];
 
 
-    giveDatatable(reportsEndpoint, reportsColumns, () => {}, {
+    dtReports = giveDatatable(reportsEndpoint, reportsColumns, () => {}, {
       searching: true,
-      ordering: true
+      ordering: true,
+      pageLength: 5
     });
 
-    giveDatatable(reportsEndpoint, reportsColumns2, () => {}, {
-      searching: true
+    dtReports2 = giveDatatable(reportsEndpoint2, reportsColumns2, () => {}, {
+      searching: true,
+      ordering: true
     }, '#second-table')
-
-    
 
 
     $(document).on('click', '.edit-button', function() {
@@ -183,8 +226,6 @@ $this->load->view('templates/modals/add-campaign-modal.php');
       $('input[name="responses"], input[name="impressions"], input[name="clicks"],input[name="campaign_id"]').val('')
     }
 
-
-
     $('.update-report-btn').on('click', function() {
 
       let data = getCustomFormData('#edit-campaign-form', 'input');
@@ -199,6 +240,9 @@ $this->load->view('templates/modals/add-campaign-modal.php');
         //what to do with the response after the request completes
         success: function(response) {
           console.log(response);
+          dtReports.ajax.reload();
+          dtReports2.ajax.reload();
+          $('#edit-campaign-modal').modal('hide');
         }
       });
     });
@@ -207,10 +251,7 @@ $this->load->view('templates/modals/add-campaign-modal.php');
 
       let data = getCustomFormData('#add-campaign-modal', 'input');
       const controllerName = 'reports';
-
       const methodName = 'add_reports';
-
-
 
       $.ajax({
         url: `${admin_url}/brainfood_campaigns/${controllerName}/${methodName}`,
@@ -219,26 +260,37 @@ $this->load->view('templates/modals/add-campaign-modal.php');
         data: data,
         success: function(response) {
           $('#add-campaign-modal').modal('hide');
+          dtReports.ajax.reload();
+          dtReports2.ajax.reload();
           clearFormFields();
           console.log(response);
         }
       });
     })
 
+
     $(document).on('click', '.delete-button', function() {
-      const id = $(this).data('campaign-id');
-      let data = getCustomFormData('#delete-button', id)
+
+      delete_id = $(this).data('campaign-id');
+      $('#delete-campaign-modal').modal('show');
+    });
+
+    $('[name="delete_report"]').on("click", function() {
       const controllerName = 'reports';
       const methodName = 'delete_report_process';
+      let data = getCustomFormData('#delete-button', delete_id)
       $.ajax({
-        url: `${admin_url}/brainfood_campaigns/${controllerName}/${methodName}/${id}`,
+        url: `${admin_url}/brainfood_campaigns/${controllerName}/${methodName}/${delete_id}`,
         type: 'POST',
         dataType: 'json',
         data: data,
         success: function(response) {
+          dtReports.ajax.reload();
+          dtReports2.ajax.reload();
           console.log(response);
+          console.log($('#delete-campaign-modal'));
+          $('#delete-campaign-modal').modal('hide');
         }
-
       });
     });
 

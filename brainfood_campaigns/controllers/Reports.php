@@ -59,14 +59,15 @@ class Reports extends AdminController
     // }
 
     public function get_reports_with_filters() {
-
         $filters = $this->input->get();
+
         $reports = $this->Reports_model->get_reports($filters);
         echo json_encode($reports);
     }
 
     public function get_reports_by_campaign_id() {
-        $get_reports_by_campaign = $this->Reports_model->getReportsByCampaign();
+        $filters = $this->input->get();
+        $get_reports_by_campaign = $this->Reports_model->getReportsByCampaign($filters);
         echo json_encode($get_reports_by_campaign);
     }
 
@@ -76,7 +77,7 @@ class Reports extends AdminController
         echo json_encode("success");
     }
 
-    // public function view_add_report()
+    //  public function view_add_report()
     // {
     //     $this->load->view('add');
     // }
@@ -105,6 +106,7 @@ class Reports extends AdminController
     //         redirect('admin/brainfood_campaigns/reports/view_report_list', 'refresh');
     //     }
     // }
+
 
     public function update_report($id)
     {
@@ -182,3 +184,4 @@ class Reports extends AdminController
         }
     }
 }
+    

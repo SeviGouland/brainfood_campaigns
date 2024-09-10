@@ -28,8 +28,6 @@ class Reports_model extends App_Model {
 
         $this->db->insert('sevi_reports', $data);
 
-
-
     }
     
     public function get_reports($filters = ['limit' => 10, 'offset' => 0]) {
@@ -39,13 +37,21 @@ class Reports_model extends App_Model {
         $this->db->select('*');
         $this->db->from('sevi_reports');
         //$this->db->where('YEAR(date) >', $last_year);
+
+        if (isset($filters['fromDate']) && $filters['fromDate'] !== '') {
+            $this->db->where('date >=', $filters['fromDate']);
+           // $this->db->where('YEAR(date) <=', $date_end);
+        }
+        if (isset($filters['endDate']) && $filters['fromDate'] !== '') {
+            $this->db->where('date <=', $filters['endDate']);
+           // $this->db->where('YEAR(date) <=', $date_end);
+        }
         
         if(isset($filters['search']) && $filters['search'] !== '') {
             $this->db->like('campaign_name', $filters['search'], 'both');
         }
         if(isset($filters['order'])) {
-            $this->db->order_by($filters['order'][0]['name'], $filters['order'][0]['dir']);
-            
+            $this->db->order_by($filters['order'][0]['name'], $filters['order'][0]['dir']);   
         }
         $num_rows = $this->db->count_all_results('', false);
         $this->db->limit($filters['limit'], $filters['offset']);
@@ -63,6 +69,9 @@ class Reports_model extends App_Model {
         $this->db->from('sevi_reports');
         $this->db->where('id', $report_id);
         return $this->db->delete('sevi_reports');
+        $this->db->from('sevi_reports');
+        $this->db->where('id', $report_id);
+        return $this->db->delete('sevi_reports');
     }
 
     /** END CRUD ************************************************************************************* */
@@ -76,12 +85,12 @@ class Reports_model extends App_Model {
         return $this->db->count_all('tblsevi_reports'); 
     }
 
-    // public function add_report_to_db($report_details) {
+    public function add_report_to_db($report_details) {
 
-    //     $this->db->insert('sevi_reports', $report_details);
-    // }
+        $this->db->insert('sevi_reports', $report_details);
+    }
 
-    public function getReportsByCampaign() {
+    public function getReportsByCampaign($filters) {
 
         $this->db->select('
             sum(clicks) as clicks, 
@@ -93,8 +102,27 @@ class Reports_model extends App_Model {
         $this->db->from('tblsevi_reports');
         $this->db->group_by('campaign_id');
 
-        // return $this->db->get()->result();
-        return $query->num_rows() > 0;
+        if (isset($filters['fromDate']) && $filters['fromDate'] !== '') {
+            $this->db->where('date >=', $filters['fromDate']);
+           // $this->db->where('YEAR(date) <=', $date_end);
+        }
+        if (isset($filters['endDate']) && $filters['fromDate'] !== '') {
+            $this->db->where('date <=', $filters['endDate']);
+           // $this->db->where('YEAR(date) <=', $date_end);
+        }
+
+        if(isset($filters['search']) && $filters['search'] !== '') {
+            $this->db->like('campaign_name', $filters['search'], 'both');
+        }
+        if(isset($filters['order'])) {
+            $this->db->order_by($filters['order'][0]['name'], $filters['order'][0]['dir']);   
+        }
+
+        $num_rows = $this->db->count_all_results('', false);
+        $this->db->limit($filters['limit'], $filters['offset']);
+        $query = $this->db->get()->result_array();
+               
+        return ['data' => $query, 'total'=> $num_rows];
         
         
         
