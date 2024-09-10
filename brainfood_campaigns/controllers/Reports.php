@@ -59,14 +59,15 @@ class Reports extends AdminController
     // }
 
     public function get_reports_with_filters() {
-
         $filters = $this->input->get();
+
         $reports = $this->Reports_model->get_reports($filters);
         echo json_encode($reports);
     }
 
     public function get_reports_by_campaign_id() {
-        $get_reports_by_campaign = $this->Reports_model->getReportsByCampaign();
+        $filters = $this->input->get();
+        $get_reports_by_campaign = $this->Reports_model->getReportsByCampaign($filters);
         echo json_encode($get_reports_by_campaign);
     }
 
