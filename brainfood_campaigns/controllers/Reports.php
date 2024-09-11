@@ -77,7 +77,7 @@ class Reports extends AdminController
         echo json_encode("success");
     }
 
-    // public function view_add_report()
+    //  public function view_add_report()
     // {
     //     $this->load->view('add');
     // }
@@ -106,6 +106,7 @@ class Reports extends AdminController
     //         redirect('admin/brainfood_campaigns/reports/view_report_list', 'refresh');
     //     }
     // }
+
 
     public function update_report($id)
     {
@@ -183,3 +184,4 @@ class Reports extends AdminController
         }
     }
 }
+    

@@ -22,6 +22,7 @@ class Reports_model extends App_Model {
             "responses" => $details['responses'],
             "impressions" => $details['impressions'],
             "clicks" => $details['clicks']
+            "clicks" => $details['clicks']
             // "date" => date('Y-m-d H:m:s', strtotime(str_replace('/', '-', $details['date']))) 
         );
         
@@ -68,6 +69,9 @@ class Reports_model extends App_Model {
     }
 
     public function delete_report($report_id){
+        $this->db->from('sevi_reports');
+        $this->db->where('id', $report_id);
+        return $this->db->delete('sevi_reports');
         $this->db->from('sevi_reports');
         $this->db->where('id', $report_id);
         return $this->db->delete('sevi_reports');
