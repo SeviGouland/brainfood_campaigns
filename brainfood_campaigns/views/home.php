@@ -91,13 +91,11 @@ $this->load->view('templates/modals/delete-campaign-modal.php');
         searchable: false,
         data: 'date',
         name: 'date'
-        name: 'date'
       },
       {
         title: 'Responses',
         searchable: false,
         data: 'responses',
-        name: 'responses'
         name: 'responses'
       },
       {
@@ -105,13 +103,11 @@ $this->load->view('templates/modals/delete-campaign-modal.php');
         searchable: false,
         data: 'impressions',
         name: 'impressions'
-        name: 'impressions'
       },
       {
         title: 'Campaign_ID',
         searchable: false,
         data: 'campaign_id',
-        name: 'campaign_id'
         name: 'campaign_id'
       },
       {
@@ -119,10 +115,8 @@ $this->load->view('templates/modals/delete-campaign-modal.php');
         searchable: false,
         data: 'campaign_name',
         name: 'campaign_name'
-        name: 'campaign_name'
       },
       {
-        title: 'Clicks',
         title: 'Clicks',
         searchable: false,
         data: 'clicks',
@@ -137,20 +131,7 @@ $this->load->view('templates/modals/delete-campaign-modal.php');
       //     return parseInt(data.impressions) > 30 ? 'Has many Impressions' : 'Has few impressions';
       //   }
       // },
-        data: 'clicks',
-        name: 'clicks'
-      },
-      // {
-      //   title: 'Status',
-      //   searchable: false,
-      //   data: null,
-      //   render: function(data, type, row) {
-      //     //console.log(data);
-      //     return parseInt(data.impressions) > 30 ? 'Has many Impressions' : 'Has few impressions';
-      //   }
-      // },
       {
-        title: 'Edit',
         title: 'Edit',
         searchable: false,
         data: null,
@@ -158,13 +139,11 @@ $this->load->view('templates/modals/delete-campaign-modal.php');
           return `
             <div><button class="btn btn-info edit-button"
             data_campaign_id="${row.id}" data-campaign='${JSON.stringify(row)}'>
-            data_campaign_id="${row.id}" data-campaign='${JSON.stringify(row)}'>
             Edit
             </button></div>`;
         },
       },
       {
-        title: 'Delete',
         title: 'Delete',
         searchable: false,
         data: null,
@@ -172,44 +151,9 @@ $this->load->view('templates/modals/delete-campaign-modal.php');
           return `
             <div><button class="btn btn-danger delete-button"
             data-campaign-id="${row.id}">
-            data-campaign-id="${row.id}">
             Delete
             </button></div>`;
         },
-      }
-    ];
-
-    const reportsEndpoint2 = `${admin_url}brainfood_campaigns/reports/get_reports_by_campaign_id`;
-    const reportsColumns2 = [{
-
-        title: 'Responses',
-        searchable: false,
-        data: 'responses',
-        name: 'responses'
-      },
-      {
-        title: 'Impressions',
-        searchable: false,
-        data: 'impressions',
-        name: 'impressions'
-      },
-      {
-        title: 'Campaign_ID',
-        searchable: false,
-        data: 'campaign_id',
-        name: 'campaign_id'
-      },
-      {
-        title: 'Campaign Name',
-        searchable: false,
-        data: 'campaign_name',
-        name: 'campaign_name'
-      },
-      {
-        title: 'Clicks',
-        searchable: false,
-        data: 'clicks',
-        name: 'clicks'
       }
     ];
 
@@ -254,17 +198,6 @@ $this->load->view('templates/modals/delete-campaign-modal.php');
       pageLength: 5
     });
 
-    giveDatatable(reportsEndpoint, reportsColumns2, () => {}, {
-      searching: true
-    }, '#second-table')
-
-    
-
-    dtReports2 = giveDatatable(reportsEndpoint2, reportsColumns2, () => {}, {
-      searching: true,
-      ordering: true
-    }, '#second-table')
-
     dtReports2 = giveDatatable(reportsEndpoint2, reportsColumns2, () => {}, {
       searching: true,
       ordering: true
@@ -292,12 +225,6 @@ $this->load->view('templates/modals/delete-campaign-modal.php');
 
       $('input[name="responses"], input[name="impressions"], input[name="clicks"],input[name="campaign_id"]').val('')
     }
-    function clearFormFields() {
-
-      $('input[name="responses"], input[name="impressions"], input[name="clicks"],input[name="campaign_id"]').val('')
-    }
-
-
 
     $('.update-report-btn').on('click', function() {
 
@@ -325,8 +252,6 @@ $this->load->view('templates/modals/delete-campaign-modal.php');
       let data = getCustomFormData('#add-campaign-modal', 'input');
       const controllerName = 'reports';
       const methodName = 'add_reports';
-
-
 
       $.ajax({
         url: `${admin_url}/brainfood_campaigns/${controllerName}/${methodName}`,
@@ -366,7 +291,6 @@ $this->load->view('templates/modals/delete-campaign-modal.php');
           console.log($('#delete-campaign-modal'));
           $('#delete-campaign-modal').modal('hide');
         }
-
       });
     });
 

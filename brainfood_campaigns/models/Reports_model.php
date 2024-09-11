@@ -22,14 +22,11 @@ class Reports_model extends App_Model {
             "responses" => $details['responses'],
             "impressions" => $details['impressions'],
             "clicks" => $details['clicks']
-            "clicks" => $details['clicks']
             // "date" => date('Y-m-d H:m:s', strtotime(str_replace('/', '-', $details['date']))) 
         );
         
 
         $this->db->insert('sevi_reports', $data);
-
-
 
     }
     
