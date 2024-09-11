@@ -89,8 +89,15 @@ $this->load->view('templates/modals/delete-campaign-modal.php');
     const reportsColumns = [{
         title: 'Date',
         searchable: false,
-        data: 'date',
-        name: 'date'
+        data: null,
+        name: 'date',
+        render: function(data, type, row) {
+          return `${row.date}
+                  <div class="row-options" style="white-space: nowrap" data-row-ref="${row.id}">
+                      <span role="link" data-id="${row.id}" style="cursor: pointer" class="edit-button"><i class="fa fa-edit"></i> Edit </span> |
+                      <span role="link" data-id="${row.id}" style="cursor: pointer" class="delete-button"><i class="fa fa-trash"></i> Delete </span> //υπάρχουν 2 τροποι
+                      </div>`;
+      },
       },
       {
         title: 'Responses',
@@ -131,30 +138,30 @@ $this->load->view('templates/modals/delete-campaign-modal.php');
       //     return parseInt(data.impressions) > 30 ? 'Has many Impressions' : 'Has few impressions';
       //   }
       // },
-      {
-        title: 'Edit',
-        searchable: false,
-        data: null,
-        render: function(data, type, row) {
-          return `
-            <div><button class="btn btn-info edit-button"
-            data_campaign_id="${row.id}" data-campaign='${JSON.stringify(row)}'>
-            Edit
-            </button></div>`;
-        },
-      },
-      {
-        title: 'Delete',
-        searchable: false,
-        data: null,
-        render: function(data, type, row) {
-          return `
-            <div><button class="btn btn-danger delete-button"
-            data-campaign-id="${row.id}">
-            Delete
-            </button></div>`;
-        },
-      }
+      // {
+      //   title: 'Edit',
+      //   searchable: false,
+      //   data: null,
+      //   render: function(data, type, row) {
+      //     return `
+      //       <div><button class="btn btn-info edit-button"
+      //       data_campaign_id="${row.id}" data-campaign='${JSON.stringify(row)}'>
+      //       Edit
+      //       </button></div>`;
+      //   },
+      // },
+      // {
+      //   title: 'Delete',
+      //   searchable: false,
+      //   data: null,
+      //   render: function(data, type, row) {
+      //     return `
+      //       <div><button class="btn btn-danger delete-button"
+      //       data-campaign-id="${row.id}">
+      //       Delete
+      //       </button></div>`;
+      //   },
+      // }
     ];
 
 
@@ -200,13 +207,15 @@ $this->load->view('templates/modals/delete-campaign-modal.php');
 
     dtReports2 = giveDatatable(reportsEndpoint2, reportsColumns2, () => {}, {
       searching: true,
-      ordering: true
+      ordering: true,
+      pageLength: 5
     }, '#second-table')
 
 
     $(document).on('click', '.edit-button', function() {
+      
       // Parse the campaign data from the button's data attribute
-      const campaign = JSON.parse($(this).attr('data-campaign'));
+      const campaign = JSON.parse($(this).attr('data-id'));
 
       for (const prop in campaign) {
         $(`[name="${prop}"]`).val(campaign[prop]);
